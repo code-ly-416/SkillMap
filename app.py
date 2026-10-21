@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import os
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from utils.pdf_parser import extract_text_from_pdf
+from utils.roadmap_generator import generate_roadmap_from_text
 
 load_dotenv()
 
@@ -35,19 +36,14 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         
-        # Extract text using our parser utility
+        # 1. Extract text from PDF
         extracted_text = extract_text_from_pdf(filepath)
         
-        # Display preview of extracted text
-        return f"""
-        <h1>Syllabus Processed Successfully!</h1>
-        <p><strong>Subject:</strong> {subject}</p>
-        <p><strong>Extracted Character Count:</strong> {len(extracted_text)} characters</p>
-        <hr>
-        <h3>Extracted Text Preview:</h3>
-        <p>{extracted_text[:1000]}...</p>
-        <br><a href="/">← Back to Home</a>
-        """
+        # 2. Generate AI Roadmap
+        roadmap_json = generate_roadmap_from_text(subject, extracted_text)
+        
+        # For now, return JSON preview to verify it works
+        return jsonify(roadmap_json)
     
     return "Invalid file type. Only PDF allowed.", 400
 
