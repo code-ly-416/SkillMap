@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SkillMap - Upload Syllabus</title>
+</head>
+<body>
+    <h1>SkillMap AI</h1>
+    <p>Upload your syllabus to generate a learning roadmap.</p>
+    
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <div>
+            <label>Subject Title:</label><br>
+            <input type="text" name="subject" required placeholder="e.g. Data Structures">
+        </div>
+        <br>
+        <div>
+            <label>Syllabus PDF:</label><br>
+            <input type="file" name="syllabus" accept=".pdf" required>
+        </div>
+        <br>
+        <button type="submit">Upload and Process</button>
+    </form>
+</body>
+</html>
