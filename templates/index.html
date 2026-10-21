@@ -2,24 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SkillMap - Upload Syllabus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillMap - Upload & Configuration</title>
+    <!-- External CSS Only -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>SkillMap AI</h1>
-    <p>Upload your syllabus to generate a learning roadmap.</p>
-    
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <div>
-            <label>Subject Title:</label><br>
-            <input type="text" name="subject" required placeholder="e.g. Data Structures">
+
+    <!-- Top Navigation Bar -->
+    <header>
+        <div class="brand-wrapper">
+            <span class="brand-title">SkillMap</span>
         </div>
-        <br>
         <div>
-            <label>Syllabus PDF:</label><br>
-            <input type="file" name="syllabus" accept=".pdf" required>
+            <div class="user-avatar">L</div>
         </div>
-        <br>
-        <button type="submit">Upload and Process</button>
-    </form>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main class="container-max">
+        <div class="grid-layout">
+            
+            <!-- Left Side: Form Container -->
+            <div class="col-span-7" style="display: flex; flex-direction: column; gap: 2rem;">
+                <div>
+                    <span class="section-tag">Curriculum Compiler</span>
+                    <h1 class="page-title">Turn raw course material into a structured learning path.</h1>
+                    <p class="page-subtitle">Upload a syllabus or course outline to generate an interactive roadmap and a focused resource guide.</p>
+                </div>
+
+                <!-- Upload Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Create a learning workspace</h2>
+                        <p class="card-desc">Start with the material you already have. You can add resources later.</p>
+                    </div>
+
+                    <form action="/upload" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+                        <!-- Subject Title Input -->
+                        <div class="form-group">
+                            <label class="form-label">Subject title</label>
+                            <input type="text" name="subject" required 
+                                placeholder="e.g. Advanced Data Structures & Algorithms" 
+                                class="form-input">
+                            <span class="input-hint">Use the name from your course or syllabus.</span>
+                        </div>
+
+                        <!-- File Upload Box -->
+                        <div class="form-group">
+                            <label class="form-label">Course material</label>
+                            <label class="dropzone">
+                                <div class="dropzone-icon">📁</div>
+                                <span class="dropzone-text">Drag and drop your syllabus here, or <span class="dropzone-link">browse</span></span>
+                                <span class="file-tag">PDF</span>
+                                <input type="file" name="syllabus" accept=".pdf" required class="hidden" onchange="updateFileName(this)">
+                            </label>
+                            <div id="file-name-display" class="hidden file-name-display"></div>
+                        </div>
+
+                        <p class="form-footer-note">Your material is used to structure this workspace and ground its learning resources.</p>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submit-btn" class="btn-primary">
+                            <span>Generate roadmap</span>
+                            <span>→</span>
+                        </button>
+                        
+                        <!-- Loading Indicator -->
+                        <div id="loading-spinner" class="hidden loading-text">
+                            ⏳ Processing syllabus and generating AI roadmap locally... (Please wait ~30s)
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Feature Highlights -->
+            <div class="col-span-5 card highlights-card">
+                <div class="card-header">
+                    <h3 class="card-title">Built for focused learning</h3>
+                    <p class="card-desc">SkillMap turns course documents into a navigable map of concepts, then pairs each topic with explanations and relevant learning resources.</p>
+                </div>
+
+                <hr class="divider">
+
+                <div class="highlights-stack">
+                    <div class="highlight-item">
+                        <div class="highlight-icon">📑</div>
+                        <div>
+                            <h4 class="highlight-title">Structured, not summarized</h4>
+                            <p class="highlight-desc">Topics, subtopics, and prerequisite steps mapped logically.</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-item">
+                        <div class="highlight-icon">🎥</div>
+                        <div>
+                            <h4 class="highlight-title">Resources with context</h4>
+                            <p class="highlight-desc">Recommendations aligned to your course material.</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-item">
+                        <div class="highlight-icon">📊</div>
+                        <div>
+                            <h4 class="highlight-title">Progress you can see</h4>
+                            <p class="highlight-desc">Mark concepts as you work through them.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>© 2026 SkillMap AI</div>
+    </footer>
+
+    <!-- External JavaScript File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
