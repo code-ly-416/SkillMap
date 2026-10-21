@@ -3,5 +3,3 @@ pypdf==4.1.0
 python-dotenv==1.0.1
 requests==2.31.0
 ollama==0.3.3
-langchain==0.1.20
-langchain-community==0.0.38

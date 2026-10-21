@@ -1,0 +1,134 @@
+{% extends "index.html" %}
+
+{% block title %}SkillMap - {{ roadmap.subject }}{% endblock %}
+
+{% block content %}
+<main class="workspace-layout">
+
+    <!-- Left Sidebar: Workspace Navigation -->
+    <aside class="workspace-sidebar">
+        <span class="sidebar-label">Your workspace</span>
+
+        <input type="text" class="search-input" placeholder="Search topics..."
+            onkeyup="filterTopics(this.value)">
+
+        <div class="sidebar-subject">
+            <h3>{{ roadmap.subject }}</h3>
+            <p>Syllabus · {{ topic_count }} topics</p>
+        </div>
+
+        <div class="sidebar-progress">
+            <span class="sidebar-label">Learning progress</span>
+            <p id="progress-text">0 of {{ topic_count }} topics explored</p>
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            {% for module in roadmap.modules %}
+            <div class="sidebar-module">
+                <h4>{{ '%02d' % loop.index }} {{ module.module_title }}</h4>
+                <p class="sidebar-module-desc">{{ module.subtopics|length }} topics</p>
+                <ul class="topic-list">
+                    {% for sub in module.subtopics %}
+                    <li class="topic-item" data-name="{{ sub.subtopic_title|lower }}">
+                        <button class="topic-status" onclick="toggleTopic(this)"
+                            aria-label="Mark as explored"></button>
+                        <span class="topic-name">{{ sub.subtopic_title }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </nav>
+
+        <div class="sidebar-footer">
+            Material source · 1 file
+        </div>
+    </aside>
+
+    <!-- Main Content: Roadmap Visualization -->
+    <section class="workspace-main">
+
+        <nav class="breadcrumbs">
+            <a href="/">Dashboard</a>
+            <span>/</span>
+            <span class="crumb-current">{{ roadmap.subject }}</span>
+        </nav>
+
+        <header class="workspace-header">
+            <h1>{{ roadmap.modules[0].module_title if roadmap.modules else roadmap.subject }}</h1>
+            <p>A structured path generated from your course outline.</p>
+            <div class="badge-row">
+                <span class="pill">{{ topic_count }} topics</span>
+                <span class="pill">Based on syllabus</span>
+            </div>
+        </header>
+
+        {% for module in roadmap.modules %}
+        <div class="roadmap-section">
+            <span class="roadmap-label">Roadmap / Module {{ '%02d' % loop.index }}</span>
+
+            <div class="tree">
+                <!-- Module root node -->
+                <div class="tree-root">
+                    <span class="tag tag-mod">MOD</span>
+                    <h3>{{ module.module_title }}</h3>
+                </div>
+
+                <!-- Subtopic cards branch -->
+                <div class="tree-row">
+                    {% for sub in module.subtopics %}
+                    <div class="tree-card{% if loop.first %} tree-card-active{% endif %}">
+                        <div class="tree-card-icon">{% if loop.first %}●{% else %}○{% endif %}</div>
+                        <h4>{{ sub.subtopic_title }}</h4>
+                        <p class="tree-card-meta">Concepts · {{ sub.sub_subtopics|length }} steps</p>
+                        <ul class="tree-steps">
+                            {% for step in sub.sub_subtopics[:4] %}
+                            <li>{{ step }}</li>
+                            {% endfor %}
+                            {% if sub.sub_subtopics|length > 4 %}
+                            <li class="tree-steps-more">+{{ sub.sub_subtopics|length - 4 }} more</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Suggested Next Steps -->
+        {% set first_topic = roadmap.modules[0].subtopics[0].subtopic_title if roadmap.modules and roadmap.modules[0].subtopics else 'your first topic' %}
+        <section class="next-steps">
+            <div class="next-steps-header">
+                <h3>Suggested next steps</h3>
+                <p>Keep moving through the concepts in dependency order.</p>
+            </div>
+            <div class="next-steps-grid">
+                <div class="step-card">
+                    <span class="tag">NEXT</span>
+                    <h4>Start with {{ first_topic }}</h4>
+                    <p>Read the core idea before moving to dependent topics.</p>
+                </div>
+                <div class="step-card">
+                    <span class="tag">PRACT</span>
+                    <h4>Trace a worked example</h4>
+                    <p>Walk through one example from your syllabus step by step.</p>
+                </div>
+                <div class="step-card">
+                    <span class="tag">RESOU</span>
+                    <h4>Watch a short explanation</h4>
+                    <p>A quick walkthrough focused on exam-style problems.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="workspace-footer">
+            Generated from: {{ roadmap.source_file }} · Updated just now
+        </footer>
+
+    </section>
+</main>
+{% endblock %}
