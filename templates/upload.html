@@ -3,93 +3,93 @@
 {% block title %}SkillMap - Upload & Configuration{% endblock %}
 
 {% block content %}
-<main class="container-max">
-    <div class="grid-layout">
-        
+<main class="max-w-[80rem] mx-auto w-full px-8 py-12">
+    <div class="grid grid-cols-1 gap-12 items-start lg:grid-cols-12">
+
         <!-- Left Side: Form Container -->
-        <div class="col-span-7" style="display: flex; flex-direction: column; gap: 2rem;">
+        <div class="flex flex-col gap-8 lg:col-span-7">
             <div>
-                <span class="section-tag">Curriculum Compiler</span>
-                <h1 class="page-title">Turn raw course material into a structured learning path.</h1>
-                <p class="page-subtitle">Upload a syllabus or course outline to generate an interactive roadmap and a focused resource guide.</p>
+                <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Curriculum Compiler</span>
+                <h1 class="text-[2.25rem] leading-tight font-extrabold tracking-tight mt-2">Turn raw course material into a structured learning path.</h1>
+                <p class="text-slate-600 mt-3">Upload a syllabus or course outline to generate an interactive roadmap and a focused resource guide.</p>
             </div>
 
             <!-- Upload Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Create a learning workspace</h2>
-                    <p class="card-desc">Start with the material you already have. You can add resources later.</p>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                <div class="mb-6">
+                    <h2 class="text-[1.125rem] font-semibold">Create a learning workspace</h2>
+                    <p class="text-sm text-slate-500 mt-1 leading-[1.4]">Start with the material you already have. You can add resources later.</p>
                 </div>
 
                 <form action="/upload" method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
                     <!-- Subject Title Input -->
-                    <div class="form-group">
-                        <label class="form-label">Subject title</label>
-                        <input type="text" name="subject" required 
-                            placeholder="e.g. Advanced Data Structures & Algorithms" 
-                            class="form-input">
-                        <span class="input-hint">Use the name from your course or syllabus.</span>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Subject title</label>
+                        <input type="text" name="subject" required
+                            placeholder="e.g. Advanced Data Structures & Algorithms"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 outline-none text-sm text-slate-800 transition-[border-color,box-shadow] duration-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.15)]">
+                        <span class="block text-xs text-slate-400 mt-1.5">Use the name from your course or syllabus.</span>
                     </div>
 
                     <!-- File Upload Box -->
-                    <div class="form-group">
-                        <label class="form-label">Course material</label>
-                        <label class="dropzone">
-                            <div class="dropzone-icon">📁</div>
-                            <span class="dropzone-text">Drag and drop your syllabus here, or <span class="dropzone-link">browse</span></span>
-                            <span class="file-tag">PDF</span>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Course material</label>
+                        <label class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-white transition-[border-color,background-color] duration-200 hover:border-indigo-600 hover:bg-[#faf8ff]">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-3">📁</div>
+                            <span class="text-sm font-medium text-slate-700">Drag and drop your syllabus here, or <span class="text-indigo-600 underline">browse</span></span>
+                            <span class="mt-3 px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-semibold border border-slate-200">PDF</span>
                             <input type="file" name="syllabus" accept=".pdf" required class="hidden" onchange="updateFileName(this)">
                         </label>
-                        <div id="file-name-display" class="hidden file-name-display"></div>
+                        <div id="file-name-display" class="hidden text-xs font-medium text-indigo-600 mt-2"></div>
                     </div>
 
-                    <p class="form-footer-note">Your material is used to structure this workspace and ground its learning resources.</p>
+                    <p class="text-xs text-slate-500 mb-6">Your material is used to structure this workspace and ground its learning resources.</p>
 
                     <!-- Submit Button -->
-                    <button type="submit" id="submit-btn" class="btn-primary">
+                    <button type="submit" id="submit-btn" class="w-full px-6 py-3.5 bg-slate-900 text-white font-medium rounded-xl cursor-pointer flex items-center justify-center gap-[0.55rem] transition-[background-color,opacity] duration-200 hover:bg-slate-800">
                         <span>Generate roadmap</span>
                         <span>→</span>
                     </button>
-                    
+
                     <!-- Loading Indicator -->
-            <div id="loading-spinner" class="hidden loading-text">
-                ⏳ Processing syllabus and generating AI roadmap locally... (This may take 2-3 minutes)
-            </div>
+                    <div id="loading-spinner" class="hidden text-center pt-3 text-sm text-indigo-600 font-bold">
+                        ⏳ Processing syllabus and generating AI roadmap locally... (This may take 2-3 minutes)
+                    </div>
                 </form>
             </div>
         </div>
 
         <!-- Right Side: Feature Highlights -->
-        <div class="col-span-5 card highlights-card">
-            <div class="card-header">
-                <h3 class="card-title">Built for focused learning</h3>
-                <p class="card-desc">SkillMap turns course documents into a navigable map of concepts, then pairs each topic with explanations and relevant learning resources.</p>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 mt-[2.2rem] lg:col-span-5">
+            <div class="mb-6">
+                <h3 class="text-[1.125rem] font-semibold">Built for focused learning</h3>
+                <p class="text-sm text-slate-500 mt-1 leading-[1.4]">SkillMap turns course documents into a navigable map of concepts, then pairs each topic with explanations and relevant learning resources.</p>
             </div>
 
-            <hr class="divider">
+            <hr class="border-0 border-t border-slate-100 my-5">
 
-            <div class="highlights-stack">
-                <div class="highlight-item">
-                    <div class="highlight-icon">📑</div>
+            <div class="flex flex-col gap-5">
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 text-[0.95rem]">📑</div>
                     <div>
-                        <h4 class="highlight-title">Structured, not summarized</h4>
-                        <p class="highlight-desc">Topics, subtopics, and prerequisite steps mapped logically.</p>
+                        <h4 class="text-sm font-semibold">Structured, not summarized</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Topics, subtopics, and prerequisite steps mapped logically.</p>
                     </div>
                 </div>
 
-                <div class="highlight-item">
-                    <div class="highlight-icon">🎥</div>
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 text-[0.95rem]">🎥</div>
                     <div>
-                        <h4 class="highlight-title">Resources with context</h4>
-                        <p class="highlight-desc">Recommendations aligned to your course material.</p>
+                        <h4 class="text-sm font-semibold">Resources with context</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Recommendations aligned to your course material.</p>
                     </div>
                 </div>
 
-                <div class="highlight-item">
-                    <div class="highlight-icon">📊</div>
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 text-[0.95rem]">📊</div>
                     <div>
-                        <h4 class="highlight-title">Progress you can see</h4>
-                        <p class="highlight-desc">Mark concepts as you work through them.</p>
+                        <h4 class="text-sm font-semibold">Progress you can see</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Mark concepts as you work through them.</p>
                     </div>
                 </div>
             </div>

@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SkillMap AI{% endblock %}</title>
-    <!-- Global External CSS -->
+    <!-- Tailwind CSS (local copy of the CDN script - works offline) -->
+    <script src="{{ url_for('static', filename='js/tailwind.js') }}"></script>
+    <!-- Residual custom styles (JS-toggled / JS-generated states) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
 
     <!-- Shared Top Navigation Bar -->
-    <header>
-        <div class="brand-wrapper">
-            <span class="brand-title">SkillMap</span>
-            <span class="brand-badge">v1.0</span>
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="font-bold text-xl">SkillMap</span>
+            <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[0.65rem] font-semibold text-slate-500">v1.0</span>
         </div>
         <div>
-            <div class="user-avatar">L</div>
+            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-medium">L</div>
         </div>
     </header>
 
@@ -25,7 +27,7 @@
     {% block content %}{% endblock %}
 
     <!-- Shared Footer -->
-    <footer>
+    <footer class="bg-white border-t border-slate-200 px-8 py-4 flex items-center justify-between text-xs text-slate-500">
         <div>© 2026 SkillMap AI</div>
     </footer>
 
