@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for, abort, jsonify
 import os
 import json
 import uuid
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from utils.pdf_parser import extract_text_from_pdf
+from utils.youtube_api import search_videos
 from utils.roadmap_generator import generate_roadmap_from_text
 
 load_dotenv()
@@ -77,6 +78,15 @@ def workspace(roadmap_id):
         roadmap=roadmap,
         topic_count=topic_count
     )
+
+@app.route('/api/videos')
+def api_videos():
+    topic = request.args.get('topic', '').strip()
+    if not topic:
+        return jsonify([])
+
+    videos = search_videos(topic, max_results=3)
+    return jsonify(videos)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

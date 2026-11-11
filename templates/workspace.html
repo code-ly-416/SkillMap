@@ -61,7 +61,7 @@
             <h1>{{ roadmap.modules[0].module_title if roadmap.modules else roadmap.subject }}</h1>
             <p>A structured path generated from your course outline.</p>
             <div class="badge-row">
-                <span class="pill">{{ topic_count }} topics</span>
+               <span class="pill">{{ topic_count }} topics</span>
                 <span class="pill">Based on syllabus</span>
             </div>
         </header>
@@ -80,7 +80,7 @@
                 <!-- Subtopic cards branch -->
                 <div class="tree-row">
                     {% for sub in module.subtopics %}
-                    <div class="tree-card{% if loop.first %} tree-card-active{% endif %}">
+                    <div class="tree-card{% if loop.first %} tree-card-active{% endif %}" data-topic="{{ sub.subtopic_title }}">
                         <div class="tree-card-icon">{% if loop.first %}●{% else %}○{% endif %}</div>
                         <h4>{{ sub.subtopic_title }}</h4>
                         <p class="tree-card-meta">Concepts · {{ sub.sub_subtopics|length }} steps</p>
@@ -128,7 +128,17 @@
         <footer class="workspace-footer">
             Generated from: {{ roadmap.source_file }} · Updated just now
         </footer>
-
+        <!-- Video Resource Panel -->
+        <div id="video-panel" class="video-panel hidden">
+            <div class="video-panel-box">
+                <div class="video-panel-header">
+                <h3 id="video-topic-title">Topic</h3>
+                <button class="video-close" onclick="closeVideoPanel()" aria-label="Close">✕</button>
+            </div>
+            <div id="video-embed"></div>
+            <div id="video-list" class="video-list"></div>
+        </div>
+        </div>
     </section>
 </main>
 {% endblock %}
