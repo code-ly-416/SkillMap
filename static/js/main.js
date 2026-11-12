@@ -25,6 +25,23 @@ function showLoading() {
 function toggleTopic(button) {
   button.closest('.topic-item').classList.toggle('done');
   updateProgress();
+  saveTopicProgress();
+}
+
+function saveTopicProgress() {
+  const mainEl = document.querySelector('main[data-roadmap-id]');
+  if (!mainEl) return;
+  const roadmapId = mainEl.dataset.roadmapId;
+
+  const done = Array.from(document.querySelectorAll('.topic-item.done')).map(function (item) {
+    return item.dataset.topicKey;
+  });
+
+  fetch('/api/progress/' + roadmapId, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ topics: done })
+  }).catch(function () {});
 }
 
 function updateProgress() {

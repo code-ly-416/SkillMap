@@ -32,7 +32,8 @@
                 <p class="text-[0.7rem] text-slate-400 mt-0.5 mb-2">{{ module.subtopics|length }} topics</p>
                 <ul class="list-none flex flex-col gap-0.5">
                     {% for sub in module.subtopics %}
-                    <li class="topic-item flex items-center gap-2 px-2 py-[0.4rem] rounded-md text-[0.8rem] text-slate-700 hover:bg-slate-50" data-name="{{ sub.subtopic_title|lower }}">
+                    {% set topic_key = module.module_title ~ '::' ~ sub.subtopic_title %}
+                    <li class="topic-item flex items-center gap-2 px-2 py-[0.4rem] rounded-md text-[0.8rem] text-slate-700 hover:bg-slate-50{% if topic_key in topics_done %} done{% endif %}" data-name="{{ sub.subtopic_title|lower }}" data-topic-key="{{ topic_key }}">
                         <button class="topic-status w-4 h-4 shrink-0 border-[1.5px] border-slate-300 rounded-full cursor-pointer text-[0.65rem] leading-none flex items-center justify-center text-transparent transition-[border-color,color] duration-200" onclick="toggleTopic(this)"
                             aria-label="Mark as explored"></button>
                         <span class="topic-name">{{ sub.subtopic_title }}</span>

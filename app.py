@@ -37,12 +37,12 @@ def _progress_path(roadmap_id):
     return os.path.join(app.config['WORKSPACE_FOLDER'], f"{roadmap_id}.progress.json")
 
 def _load_progress(roadmap_id):
-    """Learner model: quiz results per module + correct/wrong counts per topic."""
+    """Learner model: quiz results per module + correct/wrong counts per topic + explored topics."""
     path = _progress_path(roadmap_id)
     if os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
-    return {"quiz_results": {}, "topic_stats": {}}
+    return {"quiz_results": {}, "topic_stats": {}, "topics_done": []}
 
 def _save_progress(roadmap_id, progress):
     with open(_progress_path(roadmap_id), 'w', encoding='utf-8') as f:
@@ -50,7 +50,31 @@ def _save_progress(roadmap_id, progress):
 
 @app.route('/')
 def home():
-    return render_template('upload.html')
+    workspaces = []
+    workspace_folder = app.config['WORKSPACE_FOLDER']
+    if os.path.isdir(workspace_folder):
+        for fname in os.listdir(workspace_folder):
+            if not fname.endswith('.json'):
+                continue
+            roadmap_id = fname[:-5]
+            # Only ids we generated ourselves (8 hex chars) - skips .progress/.quizzes files too
+            if len(roadmap_id) != 8 or not all(c in '0123456789abcdef' for c in roadmap_id):
+                continue
+            try:
+                with open(os.path.join(workspace_folder, fname), 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                modules = data.get('modules', [])
+                workspaces.append({
+                    'roadmap_id': roadmap_id,
+                    'subject': data.get('subject', 'Untitled'),
+                    'first_module': modules[0].get('module_title', '') if modules else '',
+                    'topic_count': sum(len(m.get('subtopics', [])) for m in modules)
+                })
+            except Exception:
+                continue
+        workspaces.sort(key=lambda w: os.path.getmtime(os.path.join(workspace_folder, w['roadmap_id'] + '.json')), reverse=True)
+
+    return render_template('upload.html', workspaces=workspaces)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -109,6 +133,7 @@ def workspace(roadmap_id):
 
     # Learner model summary: best/last quiz score per module for the UI badges
     progress = _load_progress(roadmap_id)
+    topics_done = progress.get('topics_done', [])
     quiz_scores = {}
     for module_index, results in progress.get('quiz_results', {}).items():
         if results:
@@ -120,7 +145,8 @@ def workspace(roadmap_id):
         roadmap=roadmap,
         roadmap_id=roadmap_id,
         topic_count=topic_count,
-        quiz_scores=quiz_scores
+        quiz_scores=quiz_scores,
+        topics_done=topics_done
     )
 
 @app.route('/api/videos')
@@ -131,6 +157,21 @@ def api_videos():
 
     videos = search_videos(topic, max_results=3)
     return jsonify(videos)
+
+@app.route('/api/progress/<roadmap_id>', methods=['POST'])
+def api_progress(roadmap_id):
+    if _load_roadmap(roadmap_id) is None:
+        return jsonify({"error": "Workspace not found."}), 404
+
+    data = request.get_json(silent=True) or {}
+    topics = data.get('topics', [])
+    if not isinstance(topics, list):
+        return jsonify({"error": "Invalid payload."}), 400
+
+    progress = _load_progress(roadmap_id)
+    progress['topics_done'] = topics
+    _save_progress(roadmap_id, progress)
+    return jsonify({"ok": True})
 
 @app.route('/api/quiz/<roadmap_id>', methods=['POST'])
 def api_quiz(roadmap_id):

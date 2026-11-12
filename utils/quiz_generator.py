@@ -1,38 +1,59 @@
 import json
-import ollama
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_ollama import OllamaLLM
 
+MODEL_NAME = 'qwen2.5-coder:1.5b'
+MODEL_KEEP_ALIVE = '30m'  # keeps the model loaded between requests (no cold reloads)
+
+def _clean_json_output(raw_text):
+    raw_text = raw_text.strip()
+    # Clean potential markdown block formatting from local model output
+    if raw_text.startswith("```json"):
+        raw_text = raw_text[7:]
+    if raw_text.startswith("```"):
+        raw_text = raw_text[3:]
+    if raw_text.endswith("```"):
+        raw_text = raw_text[:-3]
+    return json.loads(raw_text.strip())
 
 def generate_quiz(subject_title, module_title, subtopics, proficiency="first attempt"):
     """
-    Generates a short MCQ quiz for one roadmap module via local Ollama.
+    Generates a short MCQ quiz for one roadmap module using a LangChain
+    pipeline over a local Ollama model.
     Proficiency adapts difficulty: 'first attempt' -> fundamental questions,
     'retry (previous score x/y)' -> more advanced/applied questions.
     Returns dict with module_title + questions list, or None on failure.
     """
     topic_list = "\n".join("- " + t for t in subtopics)
 
-    prompt = f"""
-You are an expert exam writer for the subject "{subject_title}".
+    json_example = """
+    {
+        "questions": [
+            {
+                "topic": "the exact subtopic from the list above that this question tests",
+                "question": "question text",
+                "options": ["option A", "option B", "option C", "option D"],
+                "answer": 0,
+                "explanation": "one sentence explaining why the answer is correct"
+            }
+        ]
+    }
+    """
+    json_literal = json_example.replace("{", "{{").replace("}", "}}")
 
-Write a quiz for the module "{module_title}" covering these topics:
-{topic_list}
+    template = f"""
+You are an expert exam writer for the subject "{{subject}}".
 
-Learner proficiency: {proficiency}
+Write a quiz for the module "{{module_title}}" covering these topics:
+{{topics}}
+
+Learner proficiency: {{proficiency}}
 - If this is a first attempt, ask fundamental questions.
 - If the learner is retrying after a previous attempt, ask more advanced and applied questions.
 
 Return ONLY a valid JSON object, no markdown formatting, no code block backticks, no extra text:
-{{
-    "questions": [
-        {{
-            "topic": "the exact subtopic from the list above that this question tests",
-            "question": "question text",
-            "options": ["option A", "option B", "option C", "option D"],
-            "answer": 0,
-            "explanation": "one sentence explaining why the answer is correct"
-        }}
-    ]
-}}
+{json_literal}
 
 Rules:
 - Exactly 5 questions.
@@ -41,26 +62,20 @@ Rules:
 - Each question must test a different topic from the list.
 """
 
-    def call_ollama():
-        response = ollama.generate(
-            model='qwen2.5-coder:1.5b',
-            prompt=prompt,
-            options={'temperature': 0.4}
-        )
-        raw_text = response['response'].strip()
-
-        # Clean potential markdown block formatting from local model output
-        if raw_text.startswith("```json"):
-            raw_text = raw_text[7:]
-        if raw_text.startswith("```"):
-            raw_text = raw_text[3:]
-        if raw_text.endswith("```"):
-            raw_text = raw_text[:-3]
-
-        return json.loads(raw_text.strip())
+    prompt = PromptTemplate(
+        input_variables=["subject", "module_title", "topics", "proficiency"],
+        template=template,
+    )
+    llm = OllamaLLM(model=MODEL_NAME, temperature=0.4, keep_alive=MODEL_KEEP_ALIVE)
+    chain = prompt | llm | StrOutputParser()
 
     try:
-        data = call_ollama()
+        data = _clean_json_output(chain.invoke({
+            "subject": subject_title,
+            "module_title": module_title,
+            "topics": topic_list,
+            "proficiency": proficiency,
+        }))
 
         questions = data.get('questions', [])
         valid = [
