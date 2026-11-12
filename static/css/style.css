@@ -66,3 +66,136 @@
     border-radius: 6px;
     flex-shrink: 0;
 }
+
+/* Quiz panel elements (JS-generated content) */
+.quiz-loading {
+    color: #64748b;
+    font-size: 14px;
+    text-align: center;
+    padding: 24px 0;
+}
+
+.quiz-question {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.quiz-q-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 8px;
+}
+
+.quiz-option {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: #334155;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.quiz-option:hover {
+    background: #f8fafc;
+}
+
+.quiz-submit {
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.quiz-submit:hover {
+    background: #1e293b;
+}
+
+.quiz-score-head {
+    text-align: center;
+    padding: 8px 0 12px;
+}
+
+.quiz-score {
+    font-size: 32px;
+    font-weight: 800;
+    color: #4f46e5;
+    margin: 0;
+}
+
+.quiz-score-label {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+
+.quiz-insights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.quiz-insight-box {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+}
+
+.quiz-insight-box h4 {
+    margin: 0 0 4px;
+    font-size: 12px;
+}
+
+.quiz-insight-box p {
+    margin: 2px 0;
+}
+
+.quiz-insight-weak {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.quiz-insight-strong {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.quiz-result-item {
+    border: 1px solid #e2e8f0;
+    border-left-width: 3px;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+}
+
+.quiz-correct {
+    border-left-color: #10b981;
+}
+
+.quiz-wrong {
+    border-left-color: #ef4444;
+}
+
+.quiz-answer {
+    font-size: 12px;
+    color: #334155;
+    margin: 4px 0 0;
+}
+
+.quiz-explanation {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0;
+    font-style: italic;
+}
