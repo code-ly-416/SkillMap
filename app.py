@@ -64,15 +64,29 @@ def upload_file():
         return "No selected file", 400
 
     if file and allowed_file(file.filename):
+        # Avoid silent overwrites when two uploads share a filename
         filename = secure_filename(file.filename)
+        if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
+            filename = f"{uuid.uuid4().hex[:6]}_{filename}"
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
         # 1. Extract text from PDF
         extracted_text = extract_text_from_pdf(filepath)
+        if not extracted_text:
+            return render_template(
+                'upload.html',
+                error="Could not extract text from this PDF. Make sure it is a text-based syllabus (not a scanned copy) and try again."
+            )
 
         # 2. Generate AI Roadmap
-        roadmap_json = generate_roadmap_from_text(subject, extracted_text)
+        try:
+            roadmap_json = generate_roadmap_from_text(subject, extracted_text)
+        except Exception:
+            return render_template(
+                'upload.html',
+                error="Could not generate the roadmap. Make sure Ollama is running (`ollama serve`) and try again."
+            )
         roadmap_json['source_file'] = filename
 
         # 3. Save workspace so it can be revisited

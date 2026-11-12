@@ -26,6 +26,7 @@ def generate_roadmap_from_text(subject_title, extracted_text):
     Takes syllabus text and subject title, sends it to local Ollama instance,
     and returns a structured hierarchical JSON roadmap.
     Retries once with corrective feedback if the structure is too shallow.
+    Raises RuntimeError when Ollama is unreachable or generation fails.
     """
     structure_rules = """
     STRICT STRUCTURAL RULES you must follow:
@@ -112,15 +113,6 @@ def generate_roadmap_from_text(subject_title, extracted_text):
 
     except Exception as e:
         print(f"Error generating local AI roadmap via Ollama: {e}")
-        # Fallback structure if Ollama is not running or fails
-        return {
-            "subject": subject_title,
-            "modules": [
-                {
-                    "module_title": "Error Processing Syllabus Locally",
-                    "subtopics": [
-                        {"subtopic_title": "Ensure Ollama is running (`ollama serve`)", "sub_subtopics": [str(e)]}
-                    ]
-                }
-            ]
-        }
+        raise RuntimeError(
+            "Ollama is not running or failed to generate a valid roadmap."
+        ) from e
